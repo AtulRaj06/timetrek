@@ -1,0 +1,98 @@
+import axios from 'axios';
+
+const API_URL = 'http://localhost:8080/api';
+
+// Create axios instance
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
+// // Add token to requests if available
+// api.interceptors.request.use(
+//   (config) => {
+//     const token = localStorage.getItem('token');
+//     if (token) {
+//       config.headers.Authorization = `Bearer ${token}`;
+//     }
+//     return config;
+//   },
+//   (error) => {
+//     return Promise.reject(error);
+//   }
+// );
+
+// // Handle response errors
+// api.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     // Handle 401 Unauthorized errors
+//     if (error.response && error.response.status === 401) {
+//       localStorage.removeItem('token');
+//       window.location.href = '/login';
+//     }
+//     return Promise.reject(error);
+//   }
+// );
+
+// Auth API
+export const authAPI = {
+  login: (credentials) => api.post('/auth/login', credentials),
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+  resetPassword: (token, password) => api.post('/auth/reset-password', { token, password }),
+  getCurrentUser: () => api.get('/auth/me')
+};
+
+// Users API
+export const usersAPI = {
+  getAll: () => api.get('/users'),
+  getById: (id) => api.get(`/users/${id}`),
+  create: (userData) => api.post('/users', userData),
+  update: (id, userData) => api.put(`/users/${id}`, userData),
+  delete: (id) => api.delete(`/users/${id}`)
+};
+
+// Checkpoints API
+export const checkpointsAPI = {
+  getAll: (params) => api.get('/checkpoints', { params }),
+  getById: (id) => api.get(`/checkpoints/${id}`),
+  create: (checkpointData) => api.post('/checkpoints', checkpointData),
+  update: (id, checkpointData) => api.put(`/checkpoints/${id}`, checkpointData),
+  delete: (id) => api.delete(`/checkpoints/${id}`)
+};
+
+// Department Masters API
+export const departmentsAPI = {
+  getAll: () => api.get('/masters/department'),
+  getById: (id) => api.get(`/masters/department/${id}`),
+  create: (data) => api.post('/masters/department', data),
+  update: (id, data) => api.put(`/masters/department/${id}`, data),
+  delete: (id) => api.delete(`/masters/department/${id}`)
+};
+
+// Type Masters API
+export const typesAPI = {
+  getAll: () => api.get('/masters/type'),
+  getById: (id) => api.get(`/masters/type/${id}`),
+  create: (data) => api.post('/masters/type', data),
+  update: (id, data) => api.put(`/masters/type/${id}`, data),
+  delete: (id) => api.delete(`/masters/type/${id}`)
+};
+
+// Head Masters API
+export const headsAPI = {
+  getAll: () => api.get('/masters/head'),
+  getById: (id) => api.get(`/masters/head/${id}`),
+  create: (data) => api.post('/masters/head', data),
+  update: (id, data) => api.put(`/masters/head/${id}`, data),
+  delete: (id) => api.delete(`/masters/head/${id}`)
+};
+
+// Activity Logs API
+export const activityLogsAPI = {
+  getAll: (params) => api.get('/activity-logs', { params })
+};
+
+export default api;
