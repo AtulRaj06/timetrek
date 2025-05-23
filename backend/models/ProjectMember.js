@@ -35,7 +35,12 @@ ProjectMember.init(
       type: DataTypes.BOOLEAN,
       defaultValue: false,
     },
-    assignedAt: {
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
+    },
+    updatedAt: {
       allowNull: false,
       type: DataTypes.DATE,
       defaultValue: DataTypes.NOW,

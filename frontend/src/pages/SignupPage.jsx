@@ -203,7 +203,7 @@ const SignupPage = () => {
                 >
                   <MenuItem value="user">User</MenuItem>
                   <MenuItem value="project_admin">Project Admin</MenuItem>
-                  <MenuItem value="super_admin">Super Admin</MenuItem>
+                  {/*<MenuItem value="super_admin">Super Admin</MenuItem>*/}
                 </Select>
               </FormControl>
               <TextField

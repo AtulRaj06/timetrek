@@ -118,7 +118,19 @@ const Header = () => {
                 >
                   Checkpoints
                 </Button>
-                
+
+                {user?.role === 'project_admin' && user?.role === 'super_admin' && (
+                  <>
+                    <Button 
+                      color="inherit" 
+                      component={RouterLink} 
+                      aria-controls={mastersMenuId}
+                      aria-haspopup="true"
+                      to="/projects"
+                    >Projects</Button>
+                  </>
+                )}
+
                 {user?.role === 'super_admin' && (
                   <>
                     <Button 

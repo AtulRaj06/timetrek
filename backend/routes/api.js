@@ -1,7 +1,7 @@
 import express from 'express';
 // import checkpointRoutes from './checkpointRoutes.js';
 // import mastersRoutes from './mastersRoutes.js';
-// import activityLogRoutes from './activityLogRoutes.js';
+import projectRoutes from './projectRoutes.js';
 import authRoutes from './authRoutes.js'
 import userRoutes from './userRoutes.js'
 
@@ -21,6 +21,9 @@ router.use('/auth', authRoutes)
 
 // User routes
 router.use('/users', userRoutes);
+
+// User routes
+router.use('/projects', projectRoutes);
 
 // // Checkpoint routes
 // router.use('/checkpoints', checkpointRoutes);

@@ -34,7 +34,12 @@ export async function up(queryInterface, Sequelize) {
       type: Sequelize.BOOLEAN,
       defaultValue: false,
     },
-    assignedAt: {
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE,
+      defaultValue: Sequelize.NOW,
+    },
+    updatedAt: {
       allowNull: false,
       type: Sequelize.DATE,
       defaultValue: Sequelize.NOW,

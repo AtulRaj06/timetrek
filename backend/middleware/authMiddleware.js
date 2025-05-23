@@ -48,3 +48,12 @@ export const isSuperAdmin = (req, res, next) => {
     return res.status(403).json({ message: 'Access denied. Super admin role required.' });
   }
 };
+
+// Middleware to check if user is super admin
+export const isProjectOrSuperAdmin = (req, res, next) => {
+  if (req.user && ['super_admin', 'project_admin'].includes(req.user.role) ) {
+    next();
+  } else {
+    return res.status(403).json({ message: 'Access denied. Super admin or Project admin role required.' });
+  }
+};
