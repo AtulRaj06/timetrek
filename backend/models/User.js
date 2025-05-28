@@ -1,5 +1,5 @@
 import { DataTypes, Model } from 'sequelize';
-import { sequelize } from './index.js';
+import sequelize from "../config/database.js";
 import bcrypt from 'bcryptjs';
 
 class User extends Model {
@@ -71,5 +71,12 @@ User.init({
     }
   }
 });
+
+User.associate = (models) => {
+  User.hasMany(models.ProjectMember, {
+    foreignKey: 'userId',
+    as: 'projectMembers'
+  });
+};
 
 export default User;

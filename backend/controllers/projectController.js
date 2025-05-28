@@ -1,5 +1,4 @@
-import Project from "../models/Project.js";
-import ProjectMember from "../models/ProjectMember.js";
+import { Project, ProjectMember } from '../models/index.js';
 import { Op } from "sequelize";
 // import { logActivity } from '../../controllers/activityLogController.js';
 

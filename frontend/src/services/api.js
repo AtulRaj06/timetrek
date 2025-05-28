@@ -64,6 +64,15 @@ export const projectsAPI = {
   // delete: (id) => api.delete(`/projects/${id}`)
 };
 
+// Projects Member API
+export const projectMembersAPI = {
+  // getAll: () => api.get("/projects"),
+  getAllByProjectId: (id) => api.get(`/project_members/${id}`),
+  // create: (projectData) => api.post("/projects", projectData),
+  // update: (id, projectData) => api.put(`/projects/${id}`, projectData),
+  // delete: (id) => api.delete(`/projects/${id}`)
+};
+
 // // Checkpoints API
 // export const checkpointsAPI = {
 //   getAll: (params) => api.get('/checkpoints', { params }),

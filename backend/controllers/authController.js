@@ -1,7 +1,7 @@
 import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { Op } from 'sequelize';
-import User from '../models/User.js';
+import { User } from '../models/index.js';
 
 // Login user
 export const login = async (req, res) => {

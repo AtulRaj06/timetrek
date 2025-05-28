@@ -1,4 +1,4 @@
-import User from '../models/User.js';
+import { User } from '../models/index.js';
 import { Op } from 'sequelize';
 // import { logActivity } from '../../controllers/activityLogController.js';
 
