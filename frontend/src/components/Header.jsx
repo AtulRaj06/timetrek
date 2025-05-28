@@ -89,7 +89,7 @@ const Header = () => {
     </MenuItem>
   </Menu>
   )
-
+  
   return (
     <>
       <AppBar position="fixed" color='white'>
@@ -111,15 +111,6 @@ const Header = () => {
           <Box sx={{ display: { xs: 'none', md: 'flex' } }}>
             {isAuthenticated ? (
               <>
-                <Button 
-                  color="inherit" 
-                  component={RouterLink} 
-                  to="/checkpoints"
-                >
-                  Checkpoints
-                </Button>
-
-                {user?.role === 'project_admin' && user?.role === 'super_admin' && (
                   <>
                     <Button 
                       color="inherit" 
@@ -129,7 +120,6 @@ const Header = () => {
                       to="/projects"
                     >Projects</Button>
                   </>
-                )}
 
                 {user?.role === 'super_admin' && (
                   <>

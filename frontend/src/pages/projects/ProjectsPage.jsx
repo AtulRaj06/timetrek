@@ -60,20 +60,17 @@ const ProjectsPage = () => {
       field: "name",
       headerName: "Project name",
       width: 250,
-      editable: true,
     },
     {
       field: "description",
       headerName: "Description",
       width: 550,
-      editable: true,
     },
     {
       field: "startDate",
       headerName: "Start Date",
       type: "number",
       width: 110,
-      editable: true,
       renderCell: (params) => {
         return (
           <div>
@@ -91,7 +88,6 @@ const ProjectsPage = () => {
       headerName: "End Date",
       type: "number",
       width: 110,
-      editable: true,
       renderCell: (params) => {
         return (
           <div>
@@ -109,7 +105,6 @@ const ProjectsPage = () => {
       headerName: "Actions",
       type: "number",
       width: 210,
-      editable: true,
       renderCell: (params) => {
         console.log("params.row.id", params.row.id);
         return (

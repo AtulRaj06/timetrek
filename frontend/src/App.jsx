@@ -42,12 +42,27 @@ function App() {
                 {/* Protected routes for all authenticated users */}
                 <Route element={<ProtectedRoute />}>
                   <Route path="/dashboard" element={<Dashboard />} />
+                  <Route
+                    element={
+                      <ProtectedRoute
+                        allowedRoles={["super_admin", "project_admin", "user"]}
+                      />
+                    }
+                  >
+                    <Route path="/projects">
+                      <Route index element={<ProjectsPage />} />
+                      <Route
+                        path="/projects/:id"
+                        element={<ViewProjectPage />}
+                      />
+                    </Route>
+                  </Route>
                   {/* <Route path="/checkpoints" element={<CheckpointsPage />} />
                 <Route path="/checkpoints/:id/view" element={<CheckpointViewPage />} /> */}
                 </Route>
 
                 {/* Protected routes for super_admin only */}
-                <Route
+                {/* <Route
                   element={
                     <ProtectedRoute
                       allowedRoles={["super_admin", "project_admin"]}
@@ -57,15 +72,15 @@ function App() {
                   <Route path="/projects">
                     <Route index element={<ProjectsPage />} />
                     <Route path="/projects/:id" element={<ViewProjectPage />} />
-                  </Route>
-                  {/* <Route path="/users" element={<UsersPage />} />
+                  </Route> */}
+                {/* <Route path="/users" element={<UsersPage />} />
                 <Route path="/masters/department" element={<DepartmentMasterPage />} />
                 <Route path="/masters/type" element={<TypeMasterPage />} />
                 <Route path="/masters/head" element={<HeadMasterPage />} />
                 <Route path="/activity-logs" element={<ActivityLogsPage />} />
                 <Route path="/checkpoints/new" element={<CheckpointFormPage />} />
                 <Route path="/checkpoints/:id/edit" element={<CheckpointFormPage />} /> */}
-                </Route>
+                {/* </Route> */}
 
                 {/* Redirect to dashboard if authenticated, otherwise to login */}
                 <Route

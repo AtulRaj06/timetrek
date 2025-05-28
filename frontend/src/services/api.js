@@ -66,11 +66,11 @@ export const projectsAPI = {
 
 // Projects Member API
 export const projectMembersAPI = {
-  // getAll: () => api.get("/projects"),
+  // getAll: () => api.get("/project_members"),
   getAllByProjectId: (id) => api.get(`/project_members/${id}`),
-  // create: (projectData) => api.post("/projects", projectData),
-  // update: (id, projectData) => api.put(`/projects/${id}`, projectData),
-  // delete: (id) => api.delete(`/projects/${id}`)
+  create: (projectData) => api.post("/project_members", projectData),
+  // update: (id, projectData) => api.put(`/project_members/${id}`, projectData),
+  delete: (id) => api.delete(`/project_members/${id}`)
 };
 
 // // Checkpoints API

@@ -93,7 +93,7 @@ export const createProject = async (req, res) => {
     // Return project without sensitive data
     const projectResponse = await newProject.toJSON();
 
-    // Create new project
+    // Create new project member for project owner
     ProjectMember.create({
       projectId: projectResponse.id,
       userId: req.user.id,

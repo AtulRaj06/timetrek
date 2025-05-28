@@ -43,7 +43,7 @@ User.init({
   },
   isDeleted: {
     type: DataTypes.BOOLEAN,
-    defaultValue: true
+    defaultValue: false
   },
   createdAt: {
     type: DataTypes.DATE,

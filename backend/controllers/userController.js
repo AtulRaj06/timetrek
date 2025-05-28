@@ -6,6 +6,9 @@ import { Op } from 'sequelize';
 export const getAllUsers = async (req, res) => {
   try {
     const users = await User.findAll({
+      where:{
+        isDeleted: false,
+      },
       attributes: { exclude: ['password', 'resetToken', 'resetTokenExpiry'] } // Don't return sensitive data
     });
     return res.status(200).json(users);

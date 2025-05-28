@@ -68,13 +68,19 @@ const SignupPage = () => {
       );
     } finally {
       setLoading(false);
+      setFormData({
+        displayName: "",
+        email: "",
+        password: "",
+        role: "",
+      });
     }
   };
 
   // Handle form input changes
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setError("")
+    setError("");
     setMessage("");
     setFormData({
       ...formData,
