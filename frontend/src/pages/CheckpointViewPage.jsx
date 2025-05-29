@@ -18,6 +18,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import EditIcon from '@mui/icons-material/Edit';
 import { checkpointsAPI } from '../services/api';
 import { useAuth } from '../contexts/AuthContext';
+import { formatDateTime } from '../utils/dateTimeUtils';
 
 const CheckpointViewPage = () => {
   const { id } = useParams();
@@ -51,18 +52,6 @@ const CheckpointViewPage = () => {
   useEffect(() => {
     fetchCheckpointData();
   }, [id]);
-  
-  // Format date for display
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
-  };
   
   return (
     <Container maxWidth="100%">
@@ -166,14 +155,14 @@ const CheckpointViewPage = () => {
               <Grid item xs={12} md={6}>
                 <Typography variant="subtitle1" fontWeight="bold">Created At</Typography>
                 <Typography variant="body1" gutterBottom>
-                  {formatDate(checkpoint.createdAt)}
+                  {formatDateTime(checkpoint.createdAt)}
                 </Typography>
               </Grid>
               
               <Grid item xs={12} md={6}>
                 <Typography variant="subtitle1" fontWeight="bold">Last Updated</Typography>
                 <Typography variant="body1" gutterBottom>
-                  {formatDate(checkpoint.updatedAt)}
+                  {formatDateTime(checkpoint.updatedAt)}
                 </Typography>
               </Grid>
               

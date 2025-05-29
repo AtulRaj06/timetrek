@@ -1,25 +1,15 @@
 import { DataTypes, Model } from "sequelize";
 import sequelize from "../config/database.js";
 
-class TimeSheet extends Model {}
+class TimeLog extends Model {}
 
-TimeSheet.init(
+TimeLog.init(
   {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: DataTypes.INTEGER,
-    },
-    taskId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Tasks",
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
     },
     userId: {
       type: DataTypes.INTEGER,
@@ -41,16 +31,31 @@ TimeSheet.init(
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    note: {
+    text: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    date: {
+    start: {
       type: DataTypes.DATE,
       allowNull: false,
     },
-    hoursSpent: {
-      type: DataTypes.DECIMAL,
+    end: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
+    task: {
+      type: DataTypes.ENUM(
+        "analysis",
+        "coding",
+        "testing",
+        "documentation",
+        "meeting"
+      ),
+      allowNull: false,
+    },
+    status: {
+      type: DataTypes.ENUM("pending", "approved", "rejected"),
+      defaultValue: "pending",
       allowNull: false,
     },
     isDeleted: {
@@ -70,28 +75,23 @@ TimeSheet.init(
   },
   {
     sequelize: sequelize,
-    modelName: "TimeSheet",
-    tableName: "TimeSheets",
+    modelName: "TimeLog",
+    tableName: "TimeLogs",
     timestamps: true,
   }
 );
 
 // Define associations
-TimeSheet.associate = (models) => {
-  TimeSheet.belongsTo(models.User, {
+TimeLog.associate = (models) => {
+  TimeLog.belongsTo(models.User, {
     foreignKey: "userId",
     as: "user",
   });
 
-  TimeSheet.belongsTo(models.Task, {
-    foreignKey: "taskId",
-    as: "task",
-  });
-
-  TimeSheet.belongsTo(models.Project, {
+  TimeLog.belongsTo(models.Project, {
     foreignKey: "projectId",
     as: "project",
   });
 };
 
-export default TimeSheet;
+export default TimeLog;

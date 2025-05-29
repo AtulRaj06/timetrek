@@ -21,6 +21,7 @@ import {
   Chip
 } from '@mui/material';
 import { activityLogsAPI } from '../services/api';
+import { formatDateTime } from '../utils/dateTimeUtils';
 
 const ActivityLogsPage = () => {
   // State for activity logs data and loading
@@ -88,18 +89,6 @@ const ActivityLogsPage = () => {
       [name]: value
     }));
     setPage(0); // Reset to first page when filters change
-  };
-  
-  // Format date for display
-  const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleString('en-GB', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false
-    });
   };
   
   // Get action color
@@ -214,7 +203,7 @@ const ActivityLogsPage = () => {
                     ) : (
                       activityLogs.map((log) => (
                         <TableRow key={log.id}>
-                          <TableCell>{formatDate(log.createdAt)}</TableCell>
+                          <TableCell>{formatDateTime(log.createdAt)}</TableCell>
                           <TableCell>{log.userName || 'NA'}</TableCell>
                           <TableCell>
                             <Chip 

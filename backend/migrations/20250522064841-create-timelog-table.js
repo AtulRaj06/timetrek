@@ -1,20 +1,10 @@
 export async function up(queryInterface, Sequelize) {
-  await queryInterface.createTable("Tasks", {
+  await queryInterface.createTable("TimeLogs", {
     id: {
       allowNull: false,
       autoIncrement: true,
       primaryKey: true,
       type: Sequelize.INTEGER,
-    },
-    projectId: {
-      type: Sequelize.INTEGER,
-      allowNull: false,
-      references: {
-        model: "Projects",
-        key: "id",
-      },
-      onUpdate: "CASCADE",
-      onDelete: "CASCADE",
     },
     userId: {
       type: Sequelize.INTEGER,
@@ -26,17 +16,42 @@ export async function up(queryInterface, Sequelize) {
       onUpdate: "CASCADE",
       onDelete: "CASCADE",
     },
-    title: {
-      type: Sequelize.STRING,
+    projectId: {
+      type: Sequelize.INTEGER,
       allowNull: false,
+      references: {
+        model: "Projects",
+        key: "id",
+      },
+      onUpdate: "CASCADE",
+      onDelete: "CASCADE",
     },
-    description: {
+    text: {
       type: Sequelize.STRING,
       allowNull: true,
     },
+    start: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    end: {
+      type: Sequelize.DATE,
+      allowNull: false,
+    },
+    task: {
+      type: Sequelize.ENUM(
+        "analysis",
+        "coding",
+        "testing",
+        "documentation",
+        "meeting"
+      ),
+      allowNull: false,
+    },
     status: {
-      type: Sequelize.ENUM("todo", "inprogress", "done"),
-      defaultValue: "todo",
+      type: Sequelize.ENUM("pending", "approved", "rejected"),
+      defaultValue: "pending",
+      allowNull: false,
     },
     isDeleted: {
       type: Sequelize.BOOLEAN,
@@ -54,11 +69,26 @@ export async function up(queryInterface, Sequelize) {
     },
   });
 
-    await queryInterface.addIndex('Tasks', ['isDeleted', 'userId', 'projectId']);
+  await queryInterface.addIndex("TimeLogs", [
+    "isDeleted",
+    "userId",
+    "projectId",
+    "task",
+    "status",
+    "start",
+    "end",
+  ]);
 }
 
 export async function down(queryInterface) {
-  await queryInterface.dropTable("Tasks");
-  await queryInterface.sequelize.query('DROP TYPE IF EXISTS enum_Tasks_status;');
-  await queryInterface.removeIndex('Tasks', ['isDeleted', 'userId', 'projectId']);
+  await queryInterface.dropTable("TimeLogs");
+  await queryInterface.removeIndex("TimeLogs", [
+    "isDeleted",
+    "userId",
+    "projectId",
+    "task",
+    "status",
+    "start",
+    "end",
+  ]);
 }

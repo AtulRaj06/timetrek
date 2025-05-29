@@ -70,44 +70,19 @@ export const projectMembersAPI = {
   getAllByProjectId: (id) => api.get(`/project_members/${id}`),
   create: (projectData) => api.post("/project_members", projectData),
   // update: (id, projectData) => api.put(`/project_members/${id}`, projectData),
-  delete: (id) => api.delete(`/project_members/${id}`)
+  delete: (id) => api.delete(`/project_members/${id}`),
 };
 
-// // Checkpoints API
-// export const checkpointsAPI = {
-//   getAll: (params) => api.get('/checkpoints', { params }),
-//   getById: (id) => api.get(`/checkpoints/${id}`),
-//   create: (checkpointData) => api.post('/checkpoints', checkpointData),
-//   update: (id, checkpointData) => api.put(`/checkpoints/${id}`, checkpointData),
-//   delete: (id) => api.delete(`/checkpoints/${id}`)
-// };
-
-// // Department Masters API
-// export const departmentsAPI = {
-//   getAll: () => api.get('/masters/department'),
-//   getById: (id) => api.get(`/masters/department/${id}`),
-//   create: (data) => api.post('/masters/department', data),
-//   update: (id, data) => api.put(`/masters/department/${id}`, data),
-//   delete: (id) => api.delete(`/masters/department/${id}`)
-// };
-
-// // Type Masters API
-// export const typesAPI = {
-//   getAll: () => api.get('/masters/type'),
-//   getById: (id) => api.get(`/masters/type/${id}`),
-//   create: (data) => api.post('/masters/type', data),
-//   update: (id, data) => api.put(`/masters/type/${id}`, data),
-//   delete: (id) => api.delete(`/masters/type/${id}`)
-// };
-
-// // Head Masters API
-// export const headsAPI = {
-//   getAll: () => api.get('/masters/head'),
-//   getById: (id) => api.get(`/masters/head/${id}`),
-//   create: (data) => api.post('/masters/head', data),
-//   update: (id, data) => api.put(`/masters/head/${id}`, data),
-//   delete: (id) => api.delete(`/masters/head/${id}`)
-// };
+// Timelogs API
+export const timelogsAPI = {
+  // getAll: (params) => api.get('/timelogs', { params }),
+  getMyTimelogs: () => api.get(`/timelogs/my`),
+  getMyTimelogsFromProjectId: (projectId) =>
+    api.get(`/timelogs/my/project/${projectId}`),
+  create: (timelogData) => api.post("/timelogs", timelogData),
+  // update: (id, checkpointData) => api.put(`/timelogs/${id}`, checkpointData),
+  // delete: (id) => api.delete(`/timelogs/${id}`)
+};
 
 // // Activity Logs API
 // export const activityLogsAPI = {

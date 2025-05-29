@@ -106,36 +106,45 @@ const ProjectsPage = () => {
       type: "number",
       width: 210,
       renderCell: (params) => {
-        console.log("params.row.id", params.row.id);
         return (
           <div>
             {showAdminBtn && (
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={() => {
-                  setDialogMode("edit");
-                  setFormData({
-                    name: params.row.name,
-                    description: params.row.description,
-                    startDate: params.row.startDate,
-                    endDate: params.row.endDate,
-                  });
-                  setEditProjectId(params.row.id);
-                  setFormError("");
-                  setDialogOpen(true);
-                }}
-              >
-                Edit
-              </Button>
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={() => {
+                    setDialogMode("edit");
+                    setFormData({
+                      name: params.row.name,
+                      description: params.row.description,
+                      startDate: params.row.startDate,
+                      endDate: params.row.endDate,
+                    });
+                    setEditProjectId(params.row.id);
+                    setFormError("");
+                    setDialogOpen(true);
+                  }}
+                >
+                  Edit
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={() => navigate(`${params.row.id}`)}
+                  style={{ marginLeft: "10px" }}
+                >
+                  View
+                </Button>
+              </>
             )}
             <Button
               variant="contained"
               color="secondary"
-              onClick={() => navigate(`${params.row.id}`)}
+              onClick={() => navigate(`${params.row.id}/timelog`)}
               style={{ marginLeft: "10px" }}
             >
-              View
+              View Timelog
             </Button>
           </div>
         );

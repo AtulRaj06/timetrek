@@ -1,9 +1,9 @@
 import express from 'express';
-// import checkpointRoutes from './checkpointRoutes.js';
 import projectMemberRoutes from './projectMemberRoutes.js';
 import projectRoutes from './projectRoutes.js';
 import authRoutes from './authRoutes.js'
 import userRoutes from './userRoutes.js'
+import timelogRoutes from './timelogRoutes.js'
 
 const router = express.Router();
 
@@ -28,8 +28,8 @@ router.use('/projects', projectRoutes);
 // Project Member Routes
 router.use('/project_members', projectMemberRoutes)
 
-// // Checkpoint routes
-// router.use('/checkpoints', checkpointRoutes);
+// Timelog routes
+router.use('/timelogs', timelogRoutes);
 
 // // Masters routes
 // router.use('/masters', mastersRoutes);
