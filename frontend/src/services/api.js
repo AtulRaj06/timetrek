@@ -58,6 +58,7 @@ export const usersAPI = {
 // Projects API
 export const projectsAPI = {
   getAll: () => api.get("/projects"),
+  getAllAdminProject: () => api.get("/projects/admin"),
   getById: (id) => api.get(`/projects/${id}`),
   create: (projectData) => api.post("/projects", projectData),
   update: (id, projectData) => api.put(`/projects/${id}`, projectData),
@@ -79,8 +80,11 @@ export const timelogsAPI = {
   getMyTimelogs: () => api.get(`/timelogs/my`),
   getMyTimelogsFromProjectId: (projectId) =>
     api.get(`/timelogs/my/project/${projectId}`),
+
+  getAdminTimeLogsFromProjectId: (projectId) => api.get(`timelogs/admin/project/${projectId}`),
+  // getAdminTimeLogs: (adminId) => api.get(`timelogs/admin/${adminId}`),
   create: (timelogData) => api.post("/timelogs", timelogData),
-  // update: (id, checkpointData) => api.put(`/timelogs/${id}`, checkpointData),
+  update: (id, timelogData) => api.put(`/timelogs/${id}`, timelogData),
   // delete: (id) => api.delete(`/timelogs/${id}`)
 };
 

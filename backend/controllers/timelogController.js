@@ -86,19 +86,36 @@ export const getMyTimelogsfromProjectId = async (req, res) => {
   }
 };
 
-// const timelogs = await TimeLog.findAll({
-//     where: {
-//       userId: req.user.id,
-//       isDeleted: false,
-//     },
-//     include: [
-//       {
-//         model: User,
-//         as: "user",
-//         attributes: ["id", "displayName", "email", "role"], // Only include necessary user fields
-//       },
-//     ],
-//   });
+export const getAdminTimeLogsFromProjectId = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+
+    const timelogs = await TimeLog.findAll({
+      where: {
+        projectId: projectId,
+        isDeleted: false,
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: ["id", "displayName", "email", "role"], // Only include necessary user fields
+        },
+      ],
+    });
+
+    if (!timelogs) {
+      return res.status(404).json({ message: "Timelogs not found" });
+    }
+
+    return res.status(200).json(timelogs);
+  } catch (error) {
+    console.error("Error fetching timelogs:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch timelogs", error: error.message });
+  }
+};
 
 // Create new Timelog
 export const createTimelog = async (req, res) => {
@@ -133,37 +150,40 @@ export const createTimelog = async (req, res) => {
   }
 };
 
-// Update project
-// export const updateProject = async (req, res) => {
-//   try {
-//     const { id } = req.params;
-//     const { name, description, startDate, endDate } = req.body;
+// Update Timelog
+export const updateTimelog = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { text, task, start, end, status } = req.body;
 
-//     // Find project
-//     const project = await Project.findByPk(id);
+    // Find timelog
+    const timelog = await TimeLog.findByPk(id);
 
-//     if (!project) {
-//       return res.status(404).json({ message: 'Project not found' });
-//     }
+    if (!timelog) {
+      return res.status(404).json({ message: "TimeLog not found" });
+    }
 
-//     // Update project fields
-//     if (name) project.name = name;
-//     if (description) project.description = description;
-//     if (startDate) project.startDate = startDate;
-//     if (endDate) project.endDate = endDate;
+    // Update timelog fields
+    if (text) timelog.text = text;
+    if (task) timelog.task = task;
+    if (start) timelog.start = start;
+    if (end) timelog.end = end;
+    if (status) timelog.status = status;
 
-//     // Save changes
-//     await project.save();
+    // Save changes
+    await timelog.save();
 
-//     // Return updated project without sensitive data
-//     const projectResponse = project.toJSON();
+    // Return updated timelog without sensitive data
+    const timelogResponse = timelog.toJSON();
 
-//     return res.status(200).json(projectResponse);
-//   } catch (error) {
-//     console.error('Error updating project:', error);
-//     return res.status(500).json({ message: 'Failed to update project', error: error.message });
-//   }
-// };
+    return res.status(200).json(timelogResponse);
+  } catch (error) {
+    console.error("Error updating timelog:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to update timelog", error: error.message });
+  }
+};
 
 // // Delete user
 // export const deleteUser = async (req, res) => {

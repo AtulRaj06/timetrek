@@ -23,8 +23,8 @@ const ViewProjectPage = () => {
   const fetchProjectMembers = async () => {
     try {
       const [proRes, proMemRes] = await Promise.all([
-        projectsAPI.getById(params.id),
-        projectMembersAPI.getAllByProjectId(params.id),
+        projectsAPI.getById(params.projectId),
+        projectMembersAPI.getAllByProjectId(params.projectId),
       ]);
       setProjectData(proRes.data);
       setProjectMembersData(proMemRes.data);

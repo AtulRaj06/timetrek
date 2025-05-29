@@ -20,6 +20,7 @@ import SignupPage from "./pages/SignupPage";
 import ProjectsPage from "./pages/projects/ProjectsPage";
 import ViewProjectPage from "./pages/projects/ViewProjectPage";
 import TimelogsPage from "./pages/timelogs/TimelogsPage";
+import AdminPage from "./pages/admin/AdminPage";
 
 function App() {
   return (
@@ -51,9 +52,29 @@ function App() {
                   <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/projects">
                     <Route index element={<ProjectsPage />} />
-                    <Route path="/projects/:id" element={<ViewProjectPage />} />
-                    <Route path="/projects/:projectId/timelog" element={<TimelogsPage />} />
+                    <Route
+                      path="/projects/:projectId/timelog"
+                      element={<TimelogsPage />}
+                    />
+                  </Route>
 
+                  <Route
+                    path="/admin"
+                    element={
+                      <ProtectedRoute
+                        allowedRoles={["super_admin", "project_admin"]}
+                      />
+                    }
+                  >
+                    <Route index element={<AdminPage />} />
+                    <Route
+                      path="/admin/projects/:projectId/users"
+                      element={<ViewProjectPage />}
+                    />
+                    {/* <Route
+                        path="/:projectId/"
+                        // element={<TimelogsPage />}
+                      /> */}
                   </Route>
                 </Route>
 

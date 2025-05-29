@@ -64,7 +64,7 @@ const ProjectsPage = () => {
     {
       field: "description",
       headerName: "Description",
-      width: 550,
+      width: 350,
     },
     {
       field: "startDate",
@@ -104,7 +104,7 @@ const ProjectsPage = () => {
       field: "actions",
       headerName: "Actions",
       type: "number",
-      width: 210,
+      width: 400,
       renderCell: (params) => {
         return (
           <div>
@@ -131,10 +131,10 @@ const ProjectsPage = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => navigate(`${params.row.id}`)}
+                  onClick={() => navigate(`/admin/projects/${params.row.id}/users`)}
                   style={{ marginLeft: "10px" }}
                 >
-                  View
+                  View Users
                 </Button>
               </>
             )}

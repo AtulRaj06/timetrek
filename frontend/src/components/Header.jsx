@@ -121,30 +121,14 @@ const Header = () => {
                     >Projects</Button>
                   </>
 
-                {user?.role === 'super_admin' && (
+                {['super_admin', 'project_admin'].includes(user?.role) && (
                   <>
                     <Button 
                       color="inherit" 
                       component={RouterLink} 
-                      aria-controls={mastersMenuId}
-                      aria-haspopup="true"
-                      onClick={handleMastersMenuOpen}
+                      to="/admin"
                     >
-                      Masters
-                    </Button>
-                    <Button 
-                      color="inherit" 
-                      component={RouterLink} 
-                      to="/users"
-                    >
-                      User Management
-                    </Button>
-                    <Button 
-                      color="inherit" 
-                      component={RouterLink} 
-                      to="/activity-logs"
-                    >
-                      Activity Logs
+                      Admin
                     </Button>
                   </>
                 )}

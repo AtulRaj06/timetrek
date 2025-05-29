@@ -1,4 +1,4 @@
-import { Project, ProjectMember } from '../models/index.js';
+import { Project, ProjectMember } from "../models/index.js";
 import { Op } from "sequelize";
 // import { logActivity } from '../../controllers/activityLogController.js';
 
@@ -31,7 +31,49 @@ export const getAllProjects = async (req, res) => {
         attributes: ["id", "name", "description", "startDate", "endDate"],
       });
       projects = userProjects.map((projectMember) => projectMember.dataValues);
-    }else{
+    } else {
+      return res.status(403).json({
+        message: "You do not have permission to view projects",
+      });
+    }
+    return res.status(200).json(projects);
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch projects", error: error.message });
+  }
+};
+
+export const getAllAdminProjects = async (req, res) => {
+  try {
+    let projects;
+    let userId = req.user.id;
+    if (req.user.role === "super_admin") {
+      projects = await Project.findAll({
+        attributes: ["id", "name", "description", "startDate", "endDate"],
+      });
+    } else if (req.user.role === "project_admin") {
+      const projectMembers = await ProjectMember.findAll({
+        where: {
+          userId: userId,
+          isDeleted: false,
+        },
+      });
+
+      const projectIds = projectMembers.map((member) => member.projectId);
+
+      const userProjects = await Project.findAll({
+        where: {
+          id: {
+            [Op.in]: projectIds,
+          },
+          isDeleted: false,
+        },
+        attributes: ["id", "name", "description", "startDate", "endDate"],
+      });
+      projects = userProjects.map((projectMember) => projectMember.dataValues);
+    } else {
       return res.status(403).json({
         message: "You do not have permission to view projects",
       });
@@ -51,13 +93,15 @@ export const getProjectById = async (req, res) => {
     const project = await Project.findByPk(req.params.id);
 
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res.status(404).json({ message: "Project not found" });
     }
 
     return res.status(200).json(project);
   } catch (error) {
-    console.error('Error fetching project:', error);
-    return res.status(500).json({ message: 'Failed to fetch project', error: error.message });
+    console.error("Error fetching project:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch project", error: error.message });
   }
 };
 
@@ -119,7 +163,7 @@ export const updateProject = async (req, res) => {
     const project = await Project.findByPk(id);
 
     if (!project) {
-      return res.status(404).json({ message: 'Project not found' });
+      return res.status(404).json({ message: "Project not found" });
     }
 
     // Update project fields
@@ -136,8 +180,10 @@ export const updateProject = async (req, res) => {
 
     return res.status(200).json(projectResponse);
   } catch (error) {
-    console.error('Error updating project:', error);
-    return res.status(500).json({ message: 'Failed to update project', error: error.message });
+    console.error("Error updating project:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to update project", error: error.message });
   }
 };
 
