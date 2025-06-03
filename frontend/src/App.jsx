@@ -21,6 +21,7 @@ import ProjectsPage from "./pages/projects/ProjectsPage";
 import ViewProjectPage from "./pages/projects/ViewProjectPage";
 import TimelogsPage from "./pages/timelogs/TimelogsPage";
 import AdminPage from "./pages/admin/AdminPage";
+import UsersPage from "./pages/admin/UsersPage";
 
 function App() {
   return (
@@ -71,10 +72,13 @@ function App() {
                       path="/admin/projects/:projectId/users"
                       element={<ViewProjectPage />}
                     />
-                    {/* <Route
-                        path="/:projectId/"
-                        // element={<TimelogsPage />}
-                      /> */}
+                    <Route
+                      element={
+                        <ProtectedRoute allowedRoles={["super_admin"]} />
+                      }
+                    >
+                      <Route path="/admin/users" element={<UsersPage />} />
+                    </Route>
                   </Route>
                 </Route>
 

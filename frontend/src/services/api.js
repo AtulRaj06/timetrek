@@ -48,7 +48,9 @@ export const authAPI = {
 
 // Users API
 export const usersAPI = {
-  getAll: () => api.get("/users"),
+  getAll: (isDeleted) => api.get(`/users?isDeleted=${isDeleted}`),
+  getAllWithProjects: (isDeleted) =>
+    api.get(`/users/withProjects?isDeleted=${isDeleted}`),
   getById: (id) => api.get(`/users/${id}`),
   create: (userData) => api.post("/users", userData),
   update: (id, userData) => api.put(`/users/${id}`, userData),
@@ -72,6 +74,10 @@ export const projectMembersAPI = {
   create: (projectData) => api.post("/project_members", projectData),
   // update: (id, projectData) => api.put(`/project_members/${id}`, projectData),
   delete: (id) => api.delete(`/project_members/${id}`),
+  updateUserProjects: (id, projectIds) =>
+    api.get(
+      `/project_members/users/${id}/updateProjects?projectIds=${projectIds}`
+    ),
 };
 
 // Timelogs API
@@ -81,7 +87,8 @@ export const timelogsAPI = {
   getMyTimelogsFromProjectId: (projectId) =>
     api.get(`/timelogs/my/project/${projectId}`),
 
-  getAdminTimeLogsFromProjectId: (projectId) => api.get(`timelogs/admin/project/${projectId}`),
+  getAdminTimeLogsFromProjectId: (projectId) =>
+    api.get(`timelogs/admin/project/${projectId}`),
   // getAdminTimeLogs: (adminId) => api.get(`timelogs/admin/${adminId}`),
   create: (timelogData) => api.post("/timelogs", timelogData),
   update: (id, timelogData) => api.put(`/timelogs/${id}`, timelogData),

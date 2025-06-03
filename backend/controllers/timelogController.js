@@ -1,5 +1,6 @@
-import { TimeLog, User } from "../models/index.js";
+import { Project, TimeLog, User } from "../models/index.js";
 import { Op } from "sequelize";
+import { isProjectMember } from "../utils/projectMemberUtils.js";
 // import { logActivity } from '../../controllers/activityLogController.js';
 
 // Get all projects
@@ -89,17 +90,24 @@ export const getMyTimelogsfromProjectId = async (req, res) => {
 export const getAdminTimeLogsFromProjectId = async (req, res) => {
   try {
     const { projectId } = req.params;
+    const projectIds = projectId.split(",");
 
     const timelogs = await TimeLog.findAll({
       where: {
-        projectId: projectId,
+        projectId: projectIds,
         isDeleted: false,
       },
+      order: [["createdAt", "DESC"]],
       include: [
         {
           model: User,
           as: "user",
           attributes: ["id", "displayName", "email", "role"], // Only include necessary user fields
+        },
+        {
+          model: Project,
+          as: "project",
+          attributes: ["name", "description", "status"],
         },
       ],
     });
@@ -125,6 +133,13 @@ export const createTimelog = async (req, res) => {
     // Basic validation
     if (!text) {
       return res.status(400).json({ message: "Timelog is required" });
+    }
+    const isProjectMem = await isProjectMember(userId, projectId);
+    console.log("isProjectMem", isProjectMem);
+    if (!isProjectMem) {
+      return res
+        .status(400)
+        .json({ message: "Only project member can enter time logs" });
     }
 
     // Create new timelog

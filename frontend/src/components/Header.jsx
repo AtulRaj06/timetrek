@@ -89,7 +89,7 @@ const Header = () => {
     </MenuItem>
   </Menu>
   )
-  
+  console.log('user',user)
   return (
     <>
       <AppBar position="fixed" color='white'>
@@ -129,6 +129,18 @@ const Header = () => {
                       to="/admin"
                     >
                       Admin
+                    </Button>
+                  </>
+                )}
+
+                {user?.role==='super_admin' && (
+                  <>
+                    <Button 
+                      color="inherit" 
+                      component={RouterLink} 
+                      to="/admin/users"
+                    >
+                      Users
                     </Button>
                   </>
                 )}

@@ -20,6 +20,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { timelogsAPI } from "../../services/api";
 import { useParams } from "react-router-dom";
 import { useAuth } from "../../contexts/AuthContext";
+import { calculateDuration } from "../../utils/dateTimeUtils";
 
 const TASK_OPTIONS = [
   { label: "Analysis", value: "analysis" },
@@ -40,9 +41,9 @@ const AddTimelogDialog = ({
   setFormData,
   editProjectId,
   setEditProjectId,
-  fetchTimeLogs,
+  fetchTimeLogs = () => {},
+  userProjects,
 }) => {
-  console.log("formData", formData);
   const params = useParams();
   const { user } = useAuth();
   const [submitLoading, setSubmitLoading] = useState(false);
@@ -77,7 +78,9 @@ const AddTimelogDialog = ({
       // }
       const newData = {
         status: "pending",
-        projectId: Number(params.projectId),
+        projectId: params.projectId
+          ? Number(params.projectId)
+          : formData.projectId,
         userId: user.id,
         ...formData,
       };
@@ -136,6 +139,22 @@ const AddTimelogDialog = ({
               ))}
             </Select>
           </FormControl>
+          {userProjects && (
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Project</InputLabel>
+              <Select
+                name="projectId"
+                value={formData.projectId}
+                label="Project Id"
+                onChange={handleChange}
+                required
+              >
+                {userProjects.map((option) => (
+                  <MenuItem value={option.id}>{option.name}</MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
           <DatePicker
             required
             label="Date"
@@ -175,6 +194,7 @@ const AddTimelogDialog = ({
               }
             />
           </Box>
+          Time Spent: {calculateDuration(formData.start, formData.end)}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>

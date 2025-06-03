@@ -6,7 +6,11 @@ import AddTimelogDialog from "../../components/Dialogs/AddTimelogDialog";
 import { DataGrid } from "@mui/x-data-grid";
 import { projectsAPI, timelogsAPI } from "../../services/api";
 import { useNavigate, useParams } from "react-router-dom";
-import { formatDate, formatTime } from "../../utils/dateTimeUtils";
+import {
+  calculateDuration,
+  formatDate,
+  formatTime,
+} from "../../utils/dateTimeUtils";
 
 const TimelogsPage = () => {
   const { user } = useAuth();
@@ -88,7 +92,9 @@ const TimelogsPage = () => {
           default:
             statusStyle.fontColor = "black";
         }
-        return <div style={{color: statusStyle.fontColor}}>{params.value}</div>;
+        return (
+          <div style={{ color: statusStyle.fontColor }}>{params.value}</div>
+        );
       },
     },
     {
@@ -104,7 +110,6 @@ const TimelogsPage = () => {
       headerName: "Start Time",
       width: 250,
       renderCell: (params) => {
-        console.log(params);
         return <div>{formatTime(params.value)}</div>;
       },
     },
@@ -113,23 +118,34 @@ const TimelogsPage = () => {
       headerName: "End Time",
       width: 250,
       renderCell: (params) => {
-        console.log(params);
         return <div>{formatTime(params.value)}</div>;
+      },
+    },
+    {
+      field: "timeSpent",
+      headerName: "Time Spent",
+      width: 100,
+      renderCell: (params) => {
+        return <div>{calculateDuration(params.row.start, params.row.end)}</div>;
       },
     },
   ];
 
+  const showAddTimelogBtn = user.role && user.role !== "super_admin";
+
   return (
     <div>
       <h1>Timelogs</h1>
-      <Button
-        variant="contained"
-        color="primary"
-        startIcon={<AddIcon />}
-        onClick={handleAddClick}
-      >
-        Add Timelogs
-      </Button>
+      {showAddTimelogBtn && (
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAddClick}
+        >
+          Add Timelogs
+        </Button>
+      )}
       <p>List of Your timelogs will be displayed here.</p>
       <DataGrid rows={rows} columns={columns} />
       {/* Add/Edit Project Dialog */}

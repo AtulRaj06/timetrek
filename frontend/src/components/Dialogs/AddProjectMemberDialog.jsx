@@ -14,6 +14,7 @@ import {
   Select,
 } from "@mui/material";
 import { projectMembersAPI, usersAPI } from "../../services/api";
+import { useAuth } from "../../contexts/AuthContext";
 
 const AddProjectMemberDialog = ({
   dialogOpen,
@@ -28,7 +29,7 @@ const AddProjectMemberDialog = ({
 }) => {
   const [submitLoading, setSubmitLoading] = useState(false);
   const [emailOptions, setEmailOptions] = useState([]);
-
+  const { user } = useAuth();
   const handleDialogClose = () => {
     setDialogOpen(false);
     fetchProjectMembers();
@@ -38,7 +39,7 @@ const AddProjectMemberDialog = ({
     const projectMembersEmails = projectMembersData.map(
       (data) => data.user.email
     );
-    const users = await usersAPI.getAll();
+    const users = await usersAPI.getAll(false);
     const options = users.data.filter(
       (user) => !projectMembersEmails.includes(user.email)
     );
@@ -81,7 +82,7 @@ const AddProjectMemberDialog = ({
       projectMembersAPI.create({
         userId: formData.userEmail,
         projectId: projectId,
-        roleInProject: "member",
+        roleInProject: formData.roleInProject ?? "member",
       });
 
       handleDialogClose();
@@ -125,19 +126,21 @@ const AddProjectMemberDialog = ({
               ))}
             </Select>
           </FormControl>
-          {/* <FormControl fullWidth margin="normal">
-            <InputLabel>Role</InputLabel>
-            <Select
-              name="role"
-              value={formData.role}
-              label="Role"
-              onChange={handleChange}
-              required
-            >
-              <MenuItem value="owner">Owner</MenuItem>
-              <MenuItem value="member">Project Member</MenuItem>
-            </Select>
-          </FormControl> */}
+          {user.role === "super_admin" && (
+            <FormControl fullWidth margin="normal">
+              <InputLabel>Role</InputLabel>
+              <Select
+                name="roleInProject"
+                value={formData.roleInProject}
+                label="Role"
+                onChange={handleChange}
+                required
+              >
+                <MenuItem value="owner">Owner</MenuItem>
+                <MenuItem value="member">Project Member</MenuItem>
+              </Select>
+            </FormControl>
+          )}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDialogClose}>Cancel</Button>

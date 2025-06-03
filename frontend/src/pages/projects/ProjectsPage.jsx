@@ -6,6 +6,7 @@ import AddProjectDialog from "../../components/Dialogs/AddProjectDialog";
 import { DataGrid } from "@mui/x-data-grid";
 import { projectsAPI } from "../../services/api";
 import { useNavigate } from "react-router-dom";
+import AddTimelogDialog from "../../components/Dialogs/AddTimelogDialog";
 
 const ProjectsPage = () => {
   const { user } = useAuth();
@@ -22,6 +23,19 @@ const ProjectsPage = () => {
     startDate: null,
     endDate: null,
   });
+
+  const [timelogDialogOpen, setTimelogDialogOpen] = useState(false);
+  const [timelogDialogMode, setTimelogDialogMode] = useState("add");
+  const [editTimelogId, setEditTimelogId] = useState(null);
+
+  const [timelogFormData, setTimelogFormData] = useState({
+    text: "",
+    task: null,
+    start: null,
+    end: null,
+    date: null,
+  });
+
   const [rows, setRows] = useState([]);
 
   const fetchProjects = async () => {
@@ -41,6 +55,8 @@ const ProjectsPage = () => {
   const showAdminBtn =
     user.role && (user.role === "super_admin" || user.role === "project_admin");
 
+  const showAddTimelogBtn = user.role && user.role !== "super_admin";
+
   // Handle dialog open for add
   const handleAddClick = () => {
     setDialogMode("add");
@@ -52,6 +68,20 @@ const ProjectsPage = () => {
     });
     setFormError("");
     setDialogOpen(true);
+  };
+
+  // Handle dialog open for add
+  const handleAddTimelogClick = () => {
+    setTimelogDialogMode("add");
+    setTimelogFormData({
+      text: "",
+      task: null,
+      start: null,
+      end: null,
+      date: null,
+    });
+    setFormError("");
+    setTimelogDialogOpen(true);
   };
 
   const columns = [
@@ -131,7 +161,9 @@ const ProjectsPage = () => {
                 <Button
                   variant="contained"
                   color="secondary"
-                  onClick={() => navigate(`/admin/projects/${params.row.id}/users`)}
+                  onClick={() =>
+                    navigate(`/admin/projects/${params.row.id}/users`)
+                  }
                   style={{ marginLeft: "10px" }}
                 >
                   View Users
@@ -165,6 +197,19 @@ const ProjectsPage = () => {
           Add Projects
         </Button>
       )}
+      <br />
+      <br />
+
+      {showAddTimelogBtn && (
+        <Button
+          variant="contained"
+          color="primary"
+          startIcon={<AddIcon />}
+          onClick={handleAddTimelogClick}
+        >
+          Add Timelog
+        </Button>
+      )}
       <p>List of projects will be displayed here.</p>
       <DataGrid rows={rows} columns={columns} />
       {/* Add/Edit Project Dialog */}
@@ -180,6 +225,20 @@ const ProjectsPage = () => {
         editProjectId={editProjectId}
         setEditProjectId={setEditProjectId}
         fetchProjects={fetchProjects}
+      />
+      {/* Add/Edit Project Dialog */}
+      <AddTimelogDialog
+        dialogOpen={timelogDialogOpen}
+        setDialogOpen={setTimelogDialogOpen}
+        dialogMode={timelogDialogMode}
+        setDialogMode={setTimelogDialogMode}
+        formError={formError}
+        setFormError={setFormError}
+        formData={timelogFormData}
+        setFormData={setTimelogFormData}
+        editProjectId={editTimelogId}
+        setEditProjectId={setEditTimelogId}
+        userProjects={rows}
       />
     </div>
   );

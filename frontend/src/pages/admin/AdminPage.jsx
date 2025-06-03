@@ -6,32 +6,27 @@ import {
   Select,
 } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
-import AddIcon from "@mui/icons-material/Add";
 import { useEffect, useState } from "react";
-import {
-  projectMembersAPI,
-  projectsAPI,
-  timelogsAPI,
-} from "../../services/api";
-import { useParams } from "react-router-dom";
+import { projectsAPI, timelogsAPI } from "../../services/api";
 import { useAuth } from "../../contexts/AuthContext";
-import AddProjectMemberDialog from "../../components/Dialogs/AddProjectMemberDialog";
-import CommonDeleteDialog from "../../components/Dialogs/CommonDeleteDialog";
-import { formatDate, formatTime } from "../../utils/dateTimeUtils";
+import {
+  calculateDuration,
+  formatDate,
+  formatDateTime,
+  formatTime,
+} from "../../utils/dateTimeUtils";
 
 const AdminPage = () => {
-  const { user } = useAuth();
   const [logsData, setLogsData] = useState([]);
   const [adminProjects, setAdminProjects] = useState([]);
   const [selectedProject, setSelectedProject] = useState(null);
-  const [formError, setFormError] = useState("");
-  const [dialogDeleteOpen, setDialogDeleteOpen] = useState(false);
-  const [deleteMemberId, setDeleteMemberId] = useState(null);
-  const params = useParams();
+  const { user } = useAuth();
   const fetchProjectLogs = async (selectedProjectId) => {
     try {
       const logs = await timelogsAPI.getAdminTimeLogsFromProjectId(
-        selectedProjectId
+        !!selectedProjectId[0]
+          ? selectedProjectId.join(",")
+          : adminProjects.map((p) => p.id).join(",")
       );
       setLogsData(logs.data);
     } catch (error) {
@@ -43,6 +38,7 @@ const AdminPage = () => {
     try {
       const response = await projectsAPI.getAllAdminProject();
       setAdminProjects(response.data);
+      fetchProjectLogs(response.data.map((p) => p.id));
     } catch (error) {
       console.error("Error fetching admin projects:", error);
     }
@@ -54,25 +50,30 @@ const AdminPage = () => {
 
   const handleProjectSelect = (e) => {
     setSelectedProject(e.target.value);
-    fetchProjectLogs(e.target.value);
+    fetchProjectLogs([e.target.value]);
   };
 
   const handleApprove = async (id) => {
     await timelogsAPI.update(id, { status: "approved" });
-    fetchProjectLogs(selectedProject)
-
+    fetchProjectLogs([selectedProject]);
   };
   const handleReject = async (id) => {
     await timelogsAPI.update(id, { status: "rejected" });
-    fetchProjectLogs(selectedProject)
+    fetchProjectLogs([selectedProject]);
   };
 
   const columns = [
     {
       field: "user.displayName",
       headerName: "User Name",
-      width: 250,
+      width: 200,
       valueGetter: (_, data) => data.user.displayName,
+    },
+    {
+      field: "project.name",
+      headerName: "Project Name",
+      width: 200,
+      valueGetter: (_, data) => data.project.name,
     },
     {
       field: "text",
@@ -121,7 +122,6 @@ const AdminPage = () => {
       headerName: "Start Time",
       width: 100,
       renderCell: (params) => {
-        console.log(params);
         return <div>{formatTime(params.value)}</div>;
       },
     },
@@ -134,17 +134,44 @@ const AdminPage = () => {
       },
     },
     {
+      field: "timeSpent",
+      headerName: "Time Spent",
+      width: 100,
+      renderCell: (params) => {
+        return <div>{calculateDuration(params.row.start, params.row.end)}</div>;
+      },
+    },
+    {
+      field: "createdAt",
+      headerName: "Created At",
+      width: 200,
+      renderCell: (params) => {
+        return <div>{formatDateTime(params.value)}</div>;
+      },
+    },
+    {
       filed: "actions",
       headerName: "",
       width: 200,
       renderCell: (params) => {
+        const actionsDisabled = user.id === params.id;
         return (
           <div>
-            <Button type="button" onClick={()=>handleApprove(params.id)}>
+            <Button
+              type="button"
+              disabled={actionsDisabled}
+              onClick={() => handleApprove(params.id)}
+            >
               Approve
             </Button>
-            <Button type="button" onClick={()=>handleReject(params.id)}>
-              <span style={{ color: "red" }}>Reject</span>
+            <Button
+              type="button"
+              disabled={actionsDisabled}
+              onClick={() => handleReject(params.id)}
+            >
+              <span style={{ color: actionsDisabled ? "gray" : "red" }}>
+                Reject
+              </span>
             </Button>
           </div>
         );
@@ -166,7 +193,7 @@ const AdminPage = () => {
           onChange={handleProjectSelect}
           required
         >
-          {adminProjects.map((option) => (
+          {[{ id: null, name: "All" }, ...adminProjects].map((option) => (
             <MenuItem value={option.id}>{option.name}</MenuItem>
           ))}
         </Select>

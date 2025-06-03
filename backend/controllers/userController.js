@@ -1,20 +1,62 @@
-import { User } from '../models/index.js';
-import { Op } from 'sequelize';
-// import { logActivity } from '../../controllers/activityLogController.js';
+import { Project, ProjectMember, User } from "../models/index.js";
+import { Op } from "sequelize";
 
 // Get all users
 export const getAllUsers = async (req, res) => {
+  const { isDeleted } = req.query;
   try {
     const users = await User.findAll({
-      where:{
-        isDeleted: false,
+      where: {
+        ...(isDeleted !== "null" && {
+          isDeleted: isDeleted,
+        }),
       },
-      attributes: { exclude: ['password', 'resetToken', 'resetTokenExpiry'] } // Don't return sensitive data
+      attributes: { exclude: ["password", "resetToken", "resetTokenExpiry"] }, // Don't return sensitive data
     });
     return res.status(200).json(users);
   } catch (error) {
-    console.error('Error fetching users:', error);
-    return res.status(500).json({ message: 'Failed to fetch users', error: error.message });
+    console.error("Error fetching users:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: error.message });
+  }
+};
+
+
+// Get all users with projects
+export const getAllUsersWithProjects = async (req, res) => {
+  const { isDeleted } = req.query;
+  try {
+    const users = await User.findAll({
+      where: {
+        ...(isDeleted !== "null" && {
+          isDeleted: isDeleted,
+        }),
+      },
+      include: [{
+        model: ProjectMember,
+        as: 'projectMembers',
+        where: {
+          isDeleted: false
+        },
+        required: false, // This makes it a LEFT JOIN, so users without projects are also included
+        include: [{
+          model: Project,
+          as: 'project',
+          where: {
+            isDeleted: false
+          },
+          attributes: ['id', 'name', 'description', 'startDate', 'endDate', 'status']
+        }]
+      }],
+      attributes: { exclude: ["password", "resetToken", "resetTokenExpiry"] }, // Don't return sensitive data
+    });
+    return res.status(200).json(users);
+  } catch (error) {
+    console.error("Error fetching users:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch users", error: error.message });
   }
 };
 
@@ -22,17 +64,19 @@ export const getAllUsers = async (req, res) => {
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findByPk(req.params.id, {
-      attributes: { exclude: ['password', 'resetToken', 'resetTokenExpiry'] }
+      attributes: { exclude: ["password", "resetToken", "resetTokenExpiry"] },
     });
-    
+
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
-    
+
     return res.status(200).json(user);
   } catch (error) {
-    console.error('Error fetching user:', error);
-    return res.status(500).json({ message: 'Failed to fetch user', error: error.message });
+    console.error("Error fetching user:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to fetch user", error: error.message });
   }
 };
 
@@ -40,38 +84,40 @@ export const getUserById = async (req, res) => {
 export const createUser = async (req, res) => {
   try {
     const { displayName, email, password, role } = req.body;
-    
+
     // Basic validation
     if (!email || !password || !displayName) {
-      return res.status(400).json({ message: 'Name, email, and password are required' });
+      return res
+        .status(400)
+        .json({ message: "Name, email, and password are required" });
     }
-    
+
     // Check if user already exists
-    const existingUser = await User.findOne({ 
+    const existingUser = await User.findOne({
       where: {
-        [Op.or]: [
-          { email }
-        ]
-      }
+        [Op.or]: [{ email }],
+      },
     });
-    
+
     if (existingUser) {
-      return res.status(409).json({ message: 'Email already exists' });
+      return res.status(409).json({ message: "Email already exists" });
     }
-    
+
     // Only super_admin can create another super_admin
-    if (role === 'super_admin' && req.user.role !== 'super_admin') {
-      return res.status(403).json({ message: 'Only super admins can create other super admins' });
+    if (role === "super_admin" && req.user.role !== "super_admin") {
+      return res
+        .status(403)
+        .json({ message: "Only super admins can create other super admins" });
     }
-    
+
     // Create new user
     const newUser = await User.create({
       displayName,
       email,
       password, // Will be hashed by the model hook
-      role: role || 'user' // Default to 'user' if role is not provided
+      role: role || "user", // Default to 'user' if role is not provided
     });
-    
+
     // Return user without sensitive data
     const userResponse = newUser.toJSON();
     delete userResponse.password;
@@ -87,16 +133,18 @@ export const createUser = async (req, res) => {
     //     'user',
     //     newUser.id,
     //     'create',
-    //     { 
-    //       name: newUser.name, 
+    //     {
+    //       name: newUser.name,
     //     }
     //   );
     // }
-    
+
     return res.status(201).json(userResponse);
   } catch (error) {
-    console.error('Error creating user:', error);
-    return res.status(500).json({ message: 'Failed to create user', error: error.message });
+    console.error("Error creating user:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to create user", error: error.message });
   }
 };
 
@@ -104,39 +152,45 @@ export const createUser = async (req, res) => {
 export const updateUser = async (req, res) => {
   try {
     const { id } = req.params;
-    const { name, email, firstName, lastName, isActive, role } = req.body;
-    
+    const { name, email, firstName, lastName, isDeleted, role } = req.body;
+
     // Find user
     const user = await User.findByPk(id);
-    
+
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
-    
+
     // Only super_admin can update role
-    if (role && req.user.role !== 'super_admin') {
-      return res.status(403).json({ message: 'Only super admins can update roles' });
+    if (role && req.user.role !== "super_admin") {
+      return res
+        .status(403)
+        .json({ message: "Only super admins can update roles" });
     }
-    
+
     // Prevent changing the last super_admin to a regular user
-    if (user.role === 'super_admin' && role === 'user') {
-      const superAdminCount = await User.count({ where: { role: 'super_admin' } });
+    if (user.role === "super_admin" && role === "user") {
+      const superAdminCount = await User.count({
+        where: { role: "super_admin" },
+      });
       if (superAdminCount <= 1) {
-        return res.status(400).json({ message: 'Cannot change the last super admin to a regular user' });
+        return res.status(400).json({
+          message: "Cannot change the last super admin to a regular user",
+        });
       }
     }
-    
+
     // Update user fields
     if (name) user.name = name;
     if (email) user.email = email;
     if (firstName !== undefined) user.firstName = firstName;
     if (lastName !== undefined) user.lastName = lastName;
-    if (isActive !== undefined) user.isActive = isActive;
+    if (isDeleted !== undefined) user.isDeleted = isDeleted;
     if (role) user.role = role;
-    
+
     // Save changes
     await user.save();
-    
+
     // Return updated user without sensitive data
     const userResponse = user.toJSON();
     delete userResponse.password;
@@ -152,16 +206,18 @@ export const updateUser = async (req, res) => {
     //     'user',
     //     user.id,
     //     'update',
-    //     { 
-    //       name: user.name, 
+    //     {
+    //       name: user.name,
     //     }
     //   );
     // }
-    
+
     return res.status(200).json(userResponse);
   } catch (error) {
-    console.error('Error updating user:', error);
-    return res.status(500).json({ message: 'Failed to update user', error: error.message });
+    console.error("Error updating user:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to update user", error: error.message });
   }
 };
 
@@ -169,22 +225,26 @@ export const updateUser = async (req, res) => {
 export const deleteUser = async (req, res) => {
   try {
     const { id } = req.params;
-    
+
     // Find user
     const user = await User.findByPk(id);
-    
+
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
-    
+
     // Prevent deleting the last super_admin
-    if (user.role === 'super_admin') {
-      const superAdminCount = await User.count({ where: { role: 'super_admin' } });
+    if (user.role === "super_admin") {
+      const superAdminCount = await User.count({
+        where: { role: "super_admin" },
+      });
       if (superAdminCount <= 1) {
-        return res.status(400).json({ message: 'Cannot delete the last super admin' });
+        return res
+          .status(400)
+          .json({ message: "Cannot delete the last super admin" });
       }
     }
-    
+
     // Delete user
     await user.destroy();
 
@@ -197,15 +257,17 @@ export const deleteUser = async (req, res) => {
     //     'user',
     //     id,
     //     'delete',
-    //     { 
+    //     {
     //       name: user.name,
     //     }
     //   );
     // }
-    
-    return res.status(200).json({ message: 'User deleted successfully' });
+
+    return res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
-    console.error('Error deleting user:', error);
-    return res.status(500).json({ message: 'Failed to delete user', error: error.message });
+    console.error("Error deleting user:", error);
+    return res
+      .status(500)
+      .json({ message: "Failed to delete user", error: error.message });
   }
 };

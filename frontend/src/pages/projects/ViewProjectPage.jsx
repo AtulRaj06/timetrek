@@ -140,7 +140,7 @@ const ViewProjectPage = () => {
         formData={formData}
         setFormData={setFormData}
         projectMembersData={projectMembersData}
-        projectId={params.id}
+        projectId={params.projectId}
         fetchProjectMembers={fetchProjectMembers}
       />
       <CommonDeleteDialog

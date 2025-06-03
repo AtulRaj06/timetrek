@@ -15,23 +15,13 @@ export async function up(queryInterface, Sequelize) {
     return;
   }
 
-  const encryptedPass = await bcrypt.hash("securepassword", 10);
+  const encryptedPass = await bcrypt.hash("password", 10);
   await queryInterface.bulkInsert(
     "Users",
     [
       {
-        displayName: "John Doe",
-        email: "example2@example.com",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        role: "user",
-        isInternal: true,
-        password: encryptedPass,
-        isDeleted: false,
-      },
-      {
         displayName: "Super Admin",
-        email: "sadmin2@example.com",
+        email: "sadmin@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date(),
         role: "super_admin",
@@ -41,7 +31,7 @@ export async function up(queryInterface, Sequelize) {
       },
       {
         displayName: "Project Admin",
-        email: "padmin2@example.com",
+        email: "padmin@gmail.com",
         createdAt: new Date(),
         updatedAt: new Date(),
         role: "project_admin",
